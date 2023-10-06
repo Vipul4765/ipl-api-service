@@ -4,6 +4,7 @@ import numpy as np
 from history import add_to_history, get_history
 import bowler_related
 import batsman_related
+import stadium_ground
 
 app = Flask(__name__)
 
@@ -86,6 +87,12 @@ def get_all_bowlers():
 def get_all_batsmen():
     response = batsman_related.all_ipl_batsman()
     return jsonify(response)
+
+@app.route('/api/batsman_stadium')
+def get_all_stadium():
+    response = stadium_ground.stadium_vs_batsman()
+    return response
+
 
 
 app.run(debug=True)

@@ -116,6 +116,43 @@ def batsmanAPI(batsman, balls=batter_data):
 bowler_data = batter_data.copy()
 
 
+def bowler_batsmen_all_record(batsman):
+    result_dict = {}
+    all_bowler = balls[balls['batter'] == batsman]
+    all_bowler = set(all_bowler['bowler'])
+    record = balls.groupby(['batter', 'bowler'])
+    # print(all_bowler)
+
+    for i in all_bowler:
+        group = record.get_group((batsman, i))
+        runs = group['batsman_run'].sum()
+        four = (group['batsman_run'] == 4).sum()
+        six = (group['batsman_run'] == 6).sum()
+        total_balls = record.get_group((batsman, i)).shape[0]
+        wide_balls = (group['extra_type'] == 'wides').sum()
+        # print(total_balls)
+        balls_played = total_balls - wide_balls
+        batsman_strike_rate = round((runs / balls_played) * 100, 2)
+        out = (group['isWicketDelivery'] == 1).sum()
+        # print(out)
+        # print(batsman_strikate)
+
+        result_dict[i] = {
+            'Runs': int(runs),
+            'Fours': four,
+            'Sixes': six,
+            'Strike Rate': batsman_strike_rate,
+            'Dismissal': out
+        }
+    data = {
+        batsman: {'against': result_dict
+                  }
+    }
+
+    return json.dumps(data, cls=NpEncoder)
+
+
+
 
 
 

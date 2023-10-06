@@ -1,10 +1,9 @@
-from flask import Flask, jsonify, request, json
+from flask import Flask, jsonify, request, json, render_template
 import ipl
 import numpy as np
 from history import add_to_history, get_history
 import bowler_related
 import batsman_related
-import home
 
 app = Flask(__name__)
 
@@ -16,18 +15,9 @@ def add_request_to_history():
     add_to_history(url, query, None)
 
 
-
 @app.route('/')
-def home_():
-    message = "Welcome to the IPL API!\n"
-    message += "To consume the API, you can make requests to different endpoints such as:\n"
-    message += "- /api/batsmen: Get information about batsmen\n"
-    message += "- /api/bowling-record: Get bowling records\n"
-    message += "- /api/team-record: Get team records\n"
-    # ... (add more endpoints and descriptions as needed)
-
-    return message
-
+def home():
+    return 'Welcome to Ipl API'
 
 
 @app.route('/api/teams')
@@ -52,7 +42,6 @@ def teamvsteam():
     return jsonify(res)
 
 
-
 @app.route('/api/team-record')
 def team_record():
     team = request.args.get('team')
@@ -66,6 +55,14 @@ def batsman_record():
     result = batsman_related.batsmanAPI(batsmen)
     return result
 
+
+@app.route('/api/batsman-vs-bowler')
+def batsman_bowler():
+    batsman = request.args.get('batsmen')
+    result = batsman_related.bowler_batsmen_all_record(batsman)
+    return result
+
+
 @app.route('/api/bowling-record')
 def bowling_record():
     bowler = request.args.get('bowler')
@@ -78,18 +75,17 @@ def view_history():
     history = get_history()
     return jsonify(history)
 
+
 @app.route('/api/bowlers')
 def get_all_bowlers():
     response = bowler_related.all_ipl_bowler()
     return response
 
+
 @app.route('/api/batsmen')
 def get_all_batsmen():
     response = batsman_related.all_ipl_batsman()
     return jsonify(response)
-
-
-
 
 
 app.run(debug=True)

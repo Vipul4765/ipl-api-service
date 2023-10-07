@@ -90,7 +90,8 @@ def get_all_batsmen():
 
 @app.route('/api/batsman_stadium')
 def get_all_stadium():
-    response = stadium_ground.stadium_vs_batsman()
+    batter = request.args.get('batsmen')
+    response = stadium_ground.stadium_vs_batsman(batter)
     return response
 
 

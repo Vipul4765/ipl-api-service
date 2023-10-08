@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
-from connect_database import connect_to_mysql_and_get_data
+import connect_database
+connect_database.connect_to_mysql_and_get_data()
 import ipl
 import numpy as np
 from history import add_to_history, get_history
@@ -7,9 +8,11 @@ import bowler_related
 import batsman_related
 import stadium_ground
 
+
 app = Flask(__name__)
 
-connect_to_mysql_and_get_data()
+
+
 
 @app.before_request
 def add_request_to_history():
@@ -96,6 +99,11 @@ def get_all_stadium():
     batter = request.args.get('batsmen')
     response = stadium_ground.stadium_vs_batsman(batter)
     return response
+
+@app.route('/api/overall_stadium')
+def overall_stadium_analysis():
+    reponse = stadium_ground.stadium_overall()
+    return reponse
 
 
 

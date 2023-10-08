@@ -80,6 +80,63 @@ def stadium_vs_batsman(batsman_name):
     except Exception as e:
         return str(e)  # Handle exceptions and return an error message if necessary
 
+def average_stadium(stadium, inning):
+    matches = matches_data
+    balls = balls_data
+    balls_match = pd.merge(matches, balls, on='ID')
+    data = balls_match[(balls_match['Stadium'] == stadium) & (balls_match['innings'] == inning)]
+    total_runs = data['total_run'].sum()
+    total_balls = data.shape[0]
+    wide_ball = (data['extra_type'] == 'wides').sum()
+    four = (data['batsman_run'] == 4).sum()
+    six = (data['batsman_run'] == 6).sum()
+    played_balls = total_balls - wide_ball
+    average_boundary = played_balls / (four + six)
+    four_average = played_balls / four
+    six_average = played_balls / six
+    stadium_average = (total_runs / played_balls) * 120
+    return stadium_average, four, six, four_average, six_average
+
+def stadium_overall():
+    result_dict = {}
+    matches = matches_data
+    balls = balls_data
+    all_stadiums = list(matches['Stadium'].unique())
+
+    for stadium in all_stadiums:
+        first_batting_win = (matches[matches['Stadium'] == stadium]['WonBy'] == 'Wickets').sum()
+        second_batting_win = (matches[matches['Stadium'] == stadium]['WonBy'] == 'Runs').sum()
+        superover = (matches[matches['Stadium'] == stadium]['WonBy'] == 'SuperOver').sum()
+        no_result = (matches[matches['Stadium'] == stadium]['WonBy'] == 'NoResults').sum()
+
+        first_inning, f_four, f_six, f_four_average, f_six_average = average_stadium(stadium, 1)
+        second_inning, s_four, s_six, s_four_average, s_six_average = average_stadium(stadium, 2)
+
+        result_dict[stadium] = {
+            'Total_Match' : first_batting_win + second_batting_win + superover +no_result,
+            'first_batting_win': first_batting_win,
+            'second_batting_win': second_batting_win,
+            'superover': superover,
+            'no_result': no_result,
+            'first_inning': {
+                'average': first_inning,
+                'four': f_four,
+                'six': f_six,
+                'four_average': f_four_average,
+                'six_average': f_six_average
+            },
+            'second_inning': {
+                'average': second_inning,
+                'four': s_four,
+                'six': s_six,
+                'four_average': s_four_average,
+                'six_average': s_six_average
+            }
+        }
+
+    return json.dumps(result_dict, cls=NpEncoder)
+
+
 
 
 

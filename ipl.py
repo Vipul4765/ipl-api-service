@@ -1,6 +1,7 @@
-import pandas as pd
-import numpy as np
 import json
+import connect_database
+import numpy as np
+import pandas as pd
 
 
 class NpEncoder(json.JSONEncoder):
@@ -13,12 +14,15 @@ class NpEncoder(json.JSONEncoder):
             return obj.tolist()
         return super(NpEncoder, self).default(obj)
 
+#call function connect_database because this have matches_data and ball_data
+connect_database.load_cached_data()
+from connect_database import matches_data, balls_data
 
-ipl_matches = "ipl-matches.csv"
-matches = pd.read_csv(ipl_matches)
+#matches have all match data
+matches = matches_data
 
-ipl_ball = "IPL_Ball_by_Ball_2008_2022 - IPL_Ball_by_Ball_2008_2022.csv"
-balls = pd.read_csv(ipl_ball)
+#balls has all bowled data
+balls = balls_data
 
 ball_withmatch = balls.merge(matches, on='ID', how='inner').copy()
 ball_withmatch['BowlingTeam'] = ball_withmatch.Team1 + ball_withmatch.Team2

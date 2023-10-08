@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import json
+from connect_database import load_cached_data
 
 
 class NpEncoder(json.JSONEncoder):
@@ -18,18 +19,21 @@ class NpEncoder(json.JSONEncoder):
 #new_csv_file_path = "stadium_column_add.csv"
 #matches.to_csv(new_csv_file_path, index=False)
 
-import pandas as pd
-import json
 
+# To load the data in balls and matches
+load_cached_data()
+from connect_database import balls_data, matches_data
 
 def stadium_vs_batsman(batsman_name):
     try:
         # Read CSV data from stadium file
-        matches = pd.read_csv('stadium_column_add.csv')
+        #matches = pd.read_csv('stadium_column_add.csv')
+        matches = matches_data
 
         # Read CSV file from ball by ball
-        ipl_ball = "IPL_Ball_by_Ball_2008_2022 - IPL_Ball_by_Ball_2008_2022.csv"
-        balls = pd.read_csv(ipl_ball)
+        #ipl_ball = "IPL_Ball_by_Ball_2008_2022 - IPL_Ball_by_Ball_2008_2022.csv"
+        #balls = pd.read_csv(ipl_ball)
+        balls = balls_data
 
         # Merge both CSV files
         balls_match = pd.merge(balls, matches, on='ID')
@@ -77,7 +81,6 @@ def stadium_vs_batsman(batsman_name):
         return str(e)  # Handle exceptions and return an error message if necessary
 
 
-# Example usage:
 
 
 

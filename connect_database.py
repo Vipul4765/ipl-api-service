@@ -2,6 +2,7 @@ import mysql.connector
 import pandas as pd
 from sqlalchemy import create_engine
 import pickle
+import gzip
 
 # Initialize dataframes as None initially
 matches_data = None
@@ -38,7 +39,7 @@ def connect_to_mysql_and_get_data():
             print('Connection closed')
 
             # Store the data in a file using pickle
-            with open('data_cache.pkl', 'wb') as cache_file:
+            with gzip.open('data_cache.pkl', 'wb') as cache_file:
                 data_to_store = {'matches_data': matches_data, 'balls_data': balls_data}
                 pickle.dump(data_to_store, cache_file)
                 print('Data cached to data_cache.pkl')
@@ -50,7 +51,7 @@ def load_cached_data():
     global matches_data, balls_data
 
     try:
-        with open('data_cache.pkl', 'rb') as cache_file:
+        with gzip.open('data_cache.pkl', 'rb') as cache_file:
             cached_data = pickle.load(cache_file)
             matches_data = cached_data.get('matches_data')
             balls_data = cached_data.get('balls_data')

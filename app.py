@@ -7,6 +7,7 @@ from history import add_to_history, get_history
 import bowler_related
 import batsman_related
 import stadium_ground
+import all_matches_with_scorecard
 
 
 app = Flask(__name__)
@@ -104,6 +105,11 @@ def get_all_stadium():
 def overall_stadium_analysis():
     reponse = stadium_ground.stadium_overall()
     return reponse
+
+@app.route('/api/total_match_overview')
+def overall_data():
+    response = all_matches_with_scorecard.generate_match_summary()
+    return response
 
 
 
